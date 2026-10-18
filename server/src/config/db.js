@@ -7,9 +7,8 @@ import { env } from './env.js';
 export const TIME_ZONE = '-05:00';
 
 // Aiven exige SSL
-const ssl = env.dbCaCertPath
-  ? { ca: fs.readFileSync(env.dbCaCertPath, 'utf8') }
-  : { rejectUnauthorized: false };
+const ca = env.dbCaCert ?? (env.dbCaCertPath && fs.readFileSync(env.dbCaCertPath, 'utf8'));
+const ssl = ca ? { ca } : { rejectUnauthorized: false };
 
 // El Service URI de Aiven trae "?ssl-mode=REQUIRED", que mysql2 no entiende: el SSL va en `ssl`
 const uri = new URL(env.databaseUrl);
